@@ -12,7 +12,7 @@ function calculateSum(x, precision) {
     while (true) {
         var step = (x ** n) / ((4 ** (n - 1)) * (n + 1));
         sum += step;
-        if (abs(step) < prec) {
+        if (Math.abs(step) < prec) {
             break;
         }
         n += 1;
