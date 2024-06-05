@@ -1,4 +1,5 @@
-import './style.scss';
+import './style.css';
+import Decimal from 'decimal.js';
 
 const xInput = document.getElementById("x");
 const precisionInput = document.getElementById("precision");
@@ -15,14 +16,14 @@ function restartWorker() {
         worker.terminate();
     }
 
-    worker = new Worker(new URL('./worker.js', import.meta.url));
+    worker = new Worker(new URL('./worker.js', import.meta.url), { type: 'module' });
     
     worker.onmessage = (e) => {
         clearTimeout(timeout);
         timeout = -1;
         const result = e.data;
-        resultContainer.innerHTML = `\\(\\approx{${result}}\\)`;
-        window.MathJax.typeset();
+        resultContainer.innerHTML = `${result}`;
+        //window.MathJax.typeset();
         calcButton.classList.remove("is-loading");
         working = false;
     };
@@ -60,27 +61,23 @@ function hideError() {
 calcButton.onclick = (e) => {
     if (!working) {
         if (xInput.value.trim() && precisionInput.value.trim()) {
-            var x = Number(xInput.value);
-            var precision = Math.floor(Number(precisionInput.value));
-            console.log(x, precision);
-            if (!isNaN(x) && !isNaN(precision)) {
-                if (precision >= 0 && precision <= 20) {
-                    hideError();
-                    calcButton.classList.add("is-loading");
-                    working = true;
-                    worker.postMessage([x, precision]);
-                    timeout = setTimeout(() => {
-                        showError('Вычисление заняло слишком много времени. Скорее всего, ряд не сходится при этом значении x.');
-                        restartWorker();
-                        calcButton.classList.remove("is-loading");
-                        working = false;
-                        timeout = -1;
-                    }, 10000);
-                } else {
-                    showError('Точность должна входить в интервал от 0 до 20 включительно.');
-                }
-            } else {
-                showError('Введенное значение не является числом.');
+            try {
+                var x = new Decimal(xInput.value);
+                var precision = new Decimal(precisionInput.value).floor();
+                hideError();
+                calcButton.classList.add("is-loading");
+                working = true;
+                worker.postMessage([x.toString(), precision.toString()]);
+                timeout = setTimeout(() => {
+                    showError('Вычисление заняло слишком много времени. Скорее всего, ряд не сходится при этом значении x.');
+                    restartWorker();
+                    calcButton.classList.remove("is-loading");
+                    working = false;
+                    timeout = -1;
+                }, 120000);
+            } catch (error) {
+                console.error(error);
+                showError("Введенные значения не являются числами.");
             }
         } else {
             showError('Введите оба значения - x и точность.');

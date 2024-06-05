@@ -8,22 +8,21 @@
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   </head>
-  <body class="has-background-grey-darker">
+  <body>
     <section class="hero is-fullheight">
       <div class="hero-body">
         <div class="container is-flex is-justify-content-center">
           <div class="box is-shadowless has-text-centered" id="mainBox">
             <h1 class="title">Вычисление суммы ряда</h1>
             <div class="block">
-              \(\sum_{n=1}^{\infty}\frac{x^n}{4^{n-1}(n+1)}\)
+              $$\sum_{n=1}^{\infty}\frac{x^n}{4^{n-1}(n+1)}\approx$$
             </div>
             <div class="block" id="resultContainer"></div>
-            <div class="block">
             <div class="block">
               <input class="input" type="text" id="x" placeholder="x" />
             </div>  
             <div class="block">
-              <input class="input" type="text" id="precision" placeholder="Точность (кол-во знаков после запятой, от 1 до 20)" />
+              <input class="input" type="text" id="precision" placeholder="Точность (1/n)" />
             </div>
             <div class="block">
               <button id="calculate" class="button is-primary is-fullwidth">Вычислить</button>
@@ -36,7 +35,7 @@
     <script>
       window.MathJax = {
         chtml: {
-          scale: 2.5,
+          scale: 2.0,
           minScale: .5,
         }
       }
